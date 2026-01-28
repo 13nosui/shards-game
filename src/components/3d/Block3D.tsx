@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion-3d';
 import { GRID_SIZE } from '../../utils/gameUtils';
 
@@ -9,9 +10,10 @@ interface Block3DProps {
 }
 
 export const Block3D = ({ x, y, color }: Block3DProps) => {
+    // Random stagger for spawn animation
+    const spawnDelay = useMemo(() => Math.random() * 0.15, []);
+
     // Convert grid coordinates to world coordinates
-    // Center of 5x5 grid (0-4) is 2. 
-    // Grid spans approx from -2 to 2.
     const size = 0.96;
     const targetX = (x - (GRID_SIZE - 1) / 2);
     const targetY = - (y - (GRID_SIZE - 1) / 2); // Flip Y for 3D coordinate system
@@ -34,7 +36,11 @@ export const Block3D = ({ x, y, color }: Block3DProps) => {
                 z: 0.1
             }}
             exit={{ scale: 0 }}
-            transition={springConfig}
+            transition={{
+                ...springConfig,
+                // Only delay the initial appearance
+                delay: spawnDelay
+            }}
         >
             <boxGeometry args={[size, size, 0.2]} />
             <meshStandardMaterial

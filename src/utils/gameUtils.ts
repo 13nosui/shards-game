@@ -11,7 +11,7 @@ export const COLORS = [
 ];
 
 export const createSmallBlock = (color?: string): SmallBlock => ({
-    id: Math.random().toString(36).substr(2, 9),
+    id: crypto.randomUUID(),
     color: color || COLORS[Math.floor(Math.random() * COLORS.length)],
 });
 
