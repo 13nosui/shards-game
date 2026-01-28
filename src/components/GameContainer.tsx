@@ -37,7 +37,7 @@ export const GameContainer = ({
     }, [handleSlide]);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 gap-8 select-none">
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 gap-8 select-none w-full max-w-[600px] mx-auto">
             <div className="flex flex-col items-center gap-2">
                 <h1 className="text-4xl font-mono font-bold tracking-[0.2em] uppercase">SHARDS</h1>
                 <div className="text-xs font-mono opacity-50 uppercase tracking-widest">
