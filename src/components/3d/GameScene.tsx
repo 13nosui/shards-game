@@ -23,12 +23,12 @@ export const GameScene = ({ smallBlocks }: GameSceneProps) => {
 
                 <ambientLight intensity={0.8} />
                 <directionalLight
-                    position={[5, 10, 5]}
+                    position={[-5, 10, -5]}
                     intensity={1.5}
                     castShadow
                     shadow-mapSize={[1024, 1024]}
                 />
-                <pointLight position={[0, 2, 0]} intensity={1.0} color="white" />
+                <pointLight position={[-3, 4, -3]} intensity={1.0} color="white" />
                 <pointLight position={[-10, -10, -5]} intensity={0.5} />
 
                 <ReactiveGrid />
