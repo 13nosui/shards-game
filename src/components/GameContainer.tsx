@@ -9,6 +9,7 @@ interface GameContainerProps {
     score: number;
     gameOver: boolean;
     isProcessing: boolean;
+    nextSpawnColors: string[];
 }
 
 export const GameContainer = ({
@@ -16,7 +17,8 @@ export const GameContainer = ({
     slide,
     score,
     gameOver,
-    isProcessing
+    isProcessing,
+    nextSpawnColors
 }: GameContainerProps) => {
 
     const handleSlide = useCallback((dir: Direction) => {
@@ -42,6 +44,23 @@ export const GameContainer = ({
                 <h1 className="text-4xl font-mono font-bold tracking-[0.2em] uppercase">SHARDS</h1>
                 <div className="text-xs font-mono opacity-50 uppercase tracking-widest">
                     {gameOver ? "GAME OVER" : isProcessing ? "SWEEPING..." : "READY"}
+                </div>
+
+                {/* Next Spawn Preview */}
+                <div className="flex flex-col items-center gap-1 mt-2">
+                    <span className="text-[10px] font-mono opacity-40 uppercase tracking-widest">Next</span>
+                    <div className="grid grid-cols-2 gap-1 p-1.5 bg-gray-50/50 rounded-sm border border-gray-100/50 shadow-sm">
+                        {nextSpawnColors.map((c, i) => (
+                            <div
+                                key={i}
+                                className="w-3 h-3 rounded-[2px]"
+                                style={{
+                                    backgroundColor: c,
+                                    boxShadow: `inset 0 0 4px rgba(0,0,0,0.1)`
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 

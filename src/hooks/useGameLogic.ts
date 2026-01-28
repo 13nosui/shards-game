@@ -10,6 +10,19 @@ import {
 } from '../utils/gameUtils';
 import { playSound } from '../utils/sounds';
 
+const generateSpawnColors = (): string[] => {
+    let selectedColors: string[] = [];
+    let isValidColorSet = false;
+
+    while (!isValidColorSet) {
+        selectedColors = Array(4).fill(null).map(() => COLORS[Math.floor(Math.random() * COLORS.length)]);
+        const counts: Record<string, number> = {};
+        selectedColors.forEach(c => counts[c] = (counts[c] || 0) + 1);
+        isValidColorSet = Object.values(counts).every(count => count < 3);
+    }
+    return selectedColors;
+};
+
 export const useGameLogic = () => {
     const [smallBlocks, setSmallBlocks] = useState<GridState>(() =>
         Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null))
@@ -18,40 +31,31 @@ export const useGameLogic = () => {
     const [score, setScore] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [gameOver, setGameOver] = useState(false);
+    const [nextSpawnColors, setNextSpawnColors] = useState<string[]>([]);
 
-    const spawn2x2At = (grid: GridState, pos: Point): GridState => {
+    const spawn2x2At = (grid: GridState, pos: Point, colors: string[]): GridState => {
         const newGrid = grid.map(row => [...row]);
-
-        // Generate 4 colors ensuring no color appears 3 or more times
-        let selectedColors: string[] = [];
-        let isValidColorSet = false;
-
-        while (!isValidColorSet) {
-            selectedColors = Array(4).fill(null).map(() => COLORS[Math.floor(Math.random() * COLORS.length)]);
-
-            // Count occurrences
-            const counts: Record<string, number> = {};
-            selectedColors.forEach(c => counts[c] = (counts[c] || 0) + 1);
-
-            // Valid if no color count >= 3
-            isValidColorSet = Object.values(counts).every(count => count < 3);
-        }
-
-        newGrid[pos.x][pos.y] = createSmallBlock(selectedColors[0]);
-        newGrid[pos.x + 1][pos.y] = createSmallBlock(selectedColors[1]);
-        newGrid[pos.x][pos.y + 1] = createSmallBlock(selectedColors[2]);
-        newGrid[pos.x + 1][pos.y + 1] = createSmallBlock(selectedColors[3]);
+        newGrid[pos.x][pos.y] = createSmallBlock(colors[0]);
+        newGrid[pos.x + 1][pos.y] = createSmallBlock(colors[1]);
+        newGrid[pos.x][pos.y + 1] = createSmallBlock(colors[2]);
+        newGrid[pos.x + 1][pos.y + 1] = createSmallBlock(colors[3]);
         return newGrid;
     };
 
     const resetGame = useCallback(() => {
         const emptyGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
         const pos = findRandom2x2EmptyArea(emptyGrid);
+
+        const initialColors = generateSpawnColors();
+        const nextBatch = generateSpawnColors();
+
         if (pos) {
-            setSmallBlocks(spawn2x2At(emptyGrid, pos));
+            setSmallBlocks(spawn2x2At(emptyGrid, pos, initialColors));
         } else {
             setSmallBlocks(emptyGrid);
         }
+
+        setNextSpawnColors(nextBatch);
         setScore(0);
         setGameOver(false);
         setIsProcessing(false);
@@ -74,8 +78,9 @@ export const useGameLogic = () => {
             return;
         }
 
-        const gridWithNewSpawn = spawn2x2At(gridAfterSlide, pos);
+        const gridWithNewSpawn = spawn2x2At(gridAfterSlide, pos, nextSpawnColors);
         setSmallBlocks(gridWithNewSpawn);
+        setNextSpawnColors(generateSpawnColors());
 
         // Wait for spawn animation (200ms)
         await new Promise(r => setTimeout(r, 200));
@@ -139,5 +144,5 @@ export const useGameLogic = () => {
         }
     }, [smallBlocks, isProcessing, gameOver]);
 
-    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame };
+    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors };
 };
