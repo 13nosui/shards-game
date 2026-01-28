@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion-3d';
-import { RoundedBox } from '@react-three/drei';
 import { COLORS, GRID_SIZE } from '../../utils/gameUtils';
 
 interface Block3DProps {
@@ -51,21 +50,20 @@ export const Block3D = ({ x, y, color, isGhost = false }: Block3DProps) => {
                 z: { type: "spring", ...springConfig, delay: spawnDelay }
             }}
         >
-            <RoundedBox args={[size, size, size]} radius={0.2} smoothness={4}>
-                <meshPhysicalMaterial
-                    color={color}
-                    transparent={isGhost}
-                    opacity={isGhost ? 0.3 : 1.0}
-                    roughness={isGhost ? 0.5 : 0.1}
-                    metalness={0.0}
-                    transmission={isGhost ? 0.5 : 0.0}
-                    ior={1.4}
-                    thickness={isGhost ? 0.5 : 1.5}
-                    attenuationColor={color}
-                    attenuationDistance={1.0}
-                    specularIntensity={isGhost ? 0.2 : 1.0}
-                />
-            </RoundedBox>
+            <boxGeometry args={[size, size, size]} />
+            <meshPhysicalMaterial
+                color={color}
+                transparent={isGhost}
+                opacity={isGhost ? 0.3 : 1.0}
+                roughness={isGhost ? 0.5 : 0.1}
+                metalness={0.0}
+                transmission={isGhost ? 0.5 : 0.0}
+                ior={1.4}
+                thickness={isGhost ? 0.5 : 1.5}
+                attenuationColor={color}
+                attenuationDistance={1.0}
+                specularIntensity={isGhost ? 0.2 : 1.0}
+            />
         </motion.mesh>
     );
 };
