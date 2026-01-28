@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion-3d';
-import { RoundedBox } from '@react-three/drei';
 import { GRID_SIZE } from '../../utils/gameUtils';
 
 interface Block3DProps {
@@ -45,26 +44,16 @@ export const Block3D = ({ x, y, type, color, onClick }: Block3DProps) => {
                 onClick?.();
             }}
         >
-            <RoundedBox
-                args={[size, size, isBig ? 0.4 : 0.2]}
-                radius={0.2}
-                smoothness={4}
-            >
+            <mesh>
+                <boxGeometry args={[size, size, isBig ? 0.4 : 0.2]} />
                 <meshStandardMaterial
                     color={color}
+                    flatShading={true}
+                    roughness={0.8}
+                    metalness={0}
                     transparent
                     opacity={0.9}
-                    emissive={color}
-                    emissiveIntensity={0.2}
-                    roughness={0.1}
-                    metalness={0.2}
                 />
-            </RoundedBox>
-
-            {/* Inner Rim Detail */}
-            <mesh position={[0, 0, isBig ? 0.21 : 0.11]}>
-                <planeGeometry args={[size * 0.9, size * 0.9]} />
-                <meshBasicMaterial color="white" transparent opacity={0.1} />
             </mesh>
         </motion.group>
     );
