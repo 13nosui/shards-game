@@ -1,11 +1,11 @@
 import { useRef, forwardRef, useImperativeHandle } from 'react';
-import { useFrame, extend, type Object3DNode } from '@react-three/fiber';
+import { useFrame, extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { GRID_SIZE } from '../../utils/gameUtils';
 
 // Define the custom shader material
-const GridMaterial = shaderMaterial(
+const ShardsGridMaterial = shaderMaterial(
     {
         uTime: 0,
         uImpulse: new THREE.Vector2(0.5, 0.5),
@@ -66,17 +66,27 @@ const GridMaterial = shaderMaterial(
   `
 );
 
-extend({ GridMaterial });
+// Fix: Unique name to avoid collision with @react-three/drei
+extend({ ShardsGridMaterial });
 
-// Valid Type Declaration for R3F v9
 declare module '@react-three/fiber' {
     interface ThreeElements {
-        gridMaterial: Object3DNode<THREE.ShaderMaterial, typeof GridMaterial> & {
-            uTime?: number;
-            uImpulse?: THREE.Vector2;
-            uStrength?: number;
-            uColor?: THREE.Color;
-            uGridSize?: number;
+        shardsGridMaterial: {
+            attach?: string
+            args?: any[]
+            ref?: any
+            key?: any
+            onUpdate?: (self: THREE.ShaderMaterial) => void
+            // Custom Uniforms
+            uTime?: number
+            uImpulse?: THREE.Vector2
+            uStrength?: number
+            uColor?: THREE.Color
+            uGridSize?: number
+            // Standard Material Props
+            transparent?: boolean
+            wireframe?: boolean
+            side?: THREE.Side
         }
     }
 }
@@ -113,9 +123,9 @@ export const ReactiveGrid = forwardRef<ReactiveGridHandle, {}>((_, ref) => {
     return (
         <mesh position={[0, 0, -0.05]} rotation={[0, 0, 0]}>
             <planeGeometry args={[10, 10, 128, 128]} />
-            <gridMaterial
+            <shardsGridMaterial
                 ref={materialRef}
-                key={GridMaterial.key}
+                key={ShardsGridMaterial.key}
                 uColor={new THREE.Color('#ffffff')}
                 transparent={false}
             />
