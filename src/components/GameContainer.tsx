@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { Grid } from './Grid';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export const GameContainer = () => {
     const { grid, slide, breakBlock, score } = useGameLogic();
