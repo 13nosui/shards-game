@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrthographicCamera, Environment } from '@react-three/drei';
+import { PerspectiveCamera, Environment } from '@react-three/drei';
 import { ReactiveGrid } from './ReactiveGrid';
 import { Block3D } from './Block3D';
 import type { GridState } from '../../types/game';
@@ -13,14 +13,19 @@ export const GameScene = ({ smallBlocks }: GameSceneProps) => {
     return (
         <div style={{ width: 'min(90vw, 500px)', height: 'min(90vw, 500px)', position: 'relative' }}>
             <Canvas shadows dpr={[1, 2]}>
-                <OrthographicCamera
+                <PerspectiveCamera
                     makeDefault
-                    position={[0, 0, 10]}
-                    zoom={100}
+                    position={[6, 6, 6]}
+                    fov={50}
                 />
 
                 <ambientLight intensity={0.5} />
-                <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+                <directionalLight
+                    position={[5, 10, 5]}
+                    intensity={1.2}
+                    castShadow
+                    shadow-mapSize={[1024, 1024]}
+                />
                 <pointLight position={[-10, -10, -5]} intensity={0.5} />
 
                 <ReactiveGrid />

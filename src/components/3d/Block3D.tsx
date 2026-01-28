@@ -28,21 +28,23 @@ export const Block3D = ({ x, y, color }: Block3DProps) => {
 
     return (
         <motion.mesh
-            initial={{ scale: 0, x: targetX, y: targetY, z: 0.1 }}
+            initial={{ scale: 0, x: targetX, y: targetY, z: size / 2 }}
             animate={{
                 scale: 1,
                 x: targetX,
                 y: targetY,
-                z: 0.1
+                z: size / 2
             }}
             exit={{ scale: 0 }}
+            castShadow
+            receiveShadow
             transition={{
                 ...springConfig,
                 // Only delay the initial appearance
                 delay: spawnDelay
             }}
         >
-            <boxGeometry args={[size, size, 0.2]} />
+            <boxGeometry args={[size, size, size]} />
             <meshStandardMaterial
                 color={color}
                 flatShading={true}
