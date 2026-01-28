@@ -6,7 +6,7 @@ function App() {
   const game = useGameLogic();
 
   return (
-    <main className="relative w-full min-h-screen bg-white text-black overflow-hidden font-sans">
+    <main className="relative w-full min-h-screen bg-white text-black overflow-hidden font-sans flex flex-col items-center justify-center">
       <GameContainer
         smallBlocks={game.smallBlocks}
         slide={game.slide}
