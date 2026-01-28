@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { Direction, GridState, BigBlock } from '../types/game';
-import { Grid } from './Grid';
+import { GameScene } from './3d/GameScene';
 import { motion } from 'framer-motion';
 
 interface GameContainerProps {
@@ -41,11 +41,11 @@ export const GameContainer = ({
             <div className="flex flex-col items-center gap-2">
                 <h1 className="text-4xl font-mono font-bold tracking-[0.2em] uppercase">SHARDS</h1>
                 <div className="text-xs font-mono opacity-50">
-                    {gameOver ? "GAME OVER - RELOAD TO RESTART" : isProcessing ? "PROCESSING..." : "READY"}
+                    {gameOver ? "GAME OVER" : isProcessing ? "PROCESSING..." : "READY"}
                 </div>
             </div>
 
-            <Grid
+            <GameScene
                 smallBlocks={smallBlocks}
                 bigBlocks={bigBlocks}
                 onBlockClick={breakBlock}
