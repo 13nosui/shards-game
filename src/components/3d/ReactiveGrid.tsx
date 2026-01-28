@@ -3,10 +3,11 @@ import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { GRID_SIZE } from '../../utils/gameUtils';
 
-// Define the static shards grid material
+// Define the static shards grid material with tiled squares
 const ShardsGridMaterial = shaderMaterial(
     {
-        uColor: new THREE.Color('#ffffff'),
+        uBgColor: new THREE.Color('#ffffff'),
+        uTileColor: new THREE.Color('#ebebeb'),
         uGridSize: GRID_SIZE,
     },
     // Vertex Shader: Standard position calculation
@@ -17,17 +18,22 @@ const ShardsGridMaterial = shaderMaterial(
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
     `,
-    // Fragment Shader: Sharp static white grid lines on black background
+    // Fragment Shader: Tiled faint grey squares on white background
     `
     varying vec2 vUv;
     uniform float uGridSize;
-    uniform vec3 uColor;
+    uniform vec3 uBgColor;
+    uniform vec3 uTileColor;
 
     void main() {
         vec2 grid = fract(vUv * uGridSize);
-        // Sharp lines with width ~0.02
-        float line = step(0.98, grid.x) + step(0.98, grid.y);
-        vec3 color = mix(vec3(0.0), uColor, clamp(line, 0.0, 1.0));
+        
+        // Small margin/gap of ~0.02
+        float margin = 0.02;
+        float mask = step(margin, grid.x) * step(margin, grid.y) * 
+                     step(grid.x, 1.0 - margin) * step(grid.y, 1.0 - margin);
+        
+        vec3 color = mix(uBgColor, uTileColor, mask);
         gl_FragColor = vec4(color, 1.0);
     }
     `
@@ -45,7 +51,8 @@ declare module '@react-three/fiber' {
             ref?: any
             key?: any
             onUpdate?: (self: THREE.ShaderMaterial) => void
-            uColor?: THREE.Color
+            uBgColor?: THREE.Color
+            uTileColor?: THREE.Color
             uGridSize?: number
             transparent?: boolean
             wireframe?: boolean
@@ -59,7 +66,9 @@ export const ReactiveGrid = () => {
         <mesh position={[0, 0, -0.05]}>
             <planeGeometry args={[10, 10]} />
             <shardsGridMaterial
-                uColor={new THREE.Color('#ffffff')}
+                uBgColor={new THREE.Color('#ffffff')}
+                uTileColor={new THREE.Color('#ebebeb')}
+                uGridSize={GRID_SIZE}
                 transparent={false}
             />
         </mesh>
