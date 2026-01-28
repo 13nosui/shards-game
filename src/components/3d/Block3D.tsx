@@ -45,13 +45,18 @@ export const Block3D = ({ x, y, color }: Block3DProps) => {
             }}
         >
             <boxGeometry args={[size, size, size]} />
-            <meshStandardMaterial
+            <meshPhysicalMaterial
                 color={color}
-                flatShading={true}
-                roughness={0.8}
-                metalness={0}
-                transparent={false}
-                opacity={1}
+                transparent={true}
+                opacity={0.85}
+                roughness={0.1}
+                metalness={0.0}
+                transmission={1.0}
+                ior={1.4}
+                thickness={1.5}
+                attenuationColor={color}
+                attenuationDistance={1.0}
+                specularIntensity={1.0}
             />
         </motion.mesh>
     );
