@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { GridState, Direction, Point } from '../types/game';
 import {
     GRID_SIZE,
+    COLORS,
     createSmallBlock,
     getAllMatches,
     slideGrid,
@@ -20,10 +21,26 @@ export const useGameLogic = () => {
 
     const spawn2x2At = (grid: GridState, pos: Point): GridState => {
         const newGrid = grid.map(row => [...row]);
-        newGrid[pos.x][pos.y] = createSmallBlock();
-        newGrid[pos.x + 1][pos.y] = createSmallBlock();
-        newGrid[pos.x][pos.y + 1] = createSmallBlock();
-        newGrid[pos.x + 1][pos.y + 1] = createSmallBlock();
+
+        // Generate 4 colors ensuring no color appears 3 or more times
+        let selectedColors: string[] = [];
+        let isValidColorSet = false;
+
+        while (!isValidColorSet) {
+            selectedColors = Array(4).fill(null).map(() => COLORS[Math.floor(Math.random() * COLORS.length)]);
+
+            // Count occurrences
+            const counts: Record<string, number> = {};
+            selectedColors.forEach(c => counts[c] = (counts[c] || 0) + 1);
+
+            // Valid if no color count >= 3
+            isValidColorSet = Object.values(counts).every(count => count < 3);
+        }
+
+        newGrid[pos.x][pos.y] = createSmallBlock(selectedColors[0]);
+        newGrid[pos.x + 1][pos.y] = createSmallBlock(selectedColors[1]);
+        newGrid[pos.x][pos.y + 1] = createSmallBlock(selectedColors[2]);
+        newGrid[pos.x + 1][pos.y + 1] = createSmallBlock(selectedColors[3]);
         return newGrid;
     };
 
