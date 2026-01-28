@@ -1,16 +1,14 @@
 import { useState, useCallback } from 'react';
 import { Block } from './Block';
-import type { GridState, BigBlock } from '../types/game';
+import type { GridState } from '../types/game';
 import { GRID_SIZE } from '../utils/gameUtils';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface GridProps {
     smallBlocks: GridState;
-    bigBlocks: BigBlock[];
-    onBlockClick: (x: number, y: number) => void;
 }
 
-export const Grid = ({ smallBlocks, bigBlocks, onBlockClick }: GridProps) => {
+export const Grid = ({ smallBlocks }: GridProps) => {
     const [pulse, setPulse] = useState(0);
 
     const handleGridReaction = useCallback(() => {
@@ -31,7 +29,7 @@ export const Grid = ({ smallBlocks, bigBlocks, onBlockClick }: GridProps) => {
                 damping: 30
             }}
             key={pulse} // Trigger animation on state change
-            className="relative bg-black border border-white/20 rounded-lg grid-inner-shadow overflow-hidden"
+            className="relative bg-white border border-black/5 grid-inner-shadow overflow-hidden"
             style={{
                 width: 'min(90vw, 500px)',
                 height: 'min(90vw, 500px)',
@@ -47,7 +45,7 @@ export const Grid = ({ smallBlocks, bigBlocks, onBlockClick }: GridProps) => {
                 Array.from({ length: GRID_SIZE }).map((_, x) => {
                     const block = smallBlocks[x][y]; // Access as [col][row]
                     return (
-                        <div key={`cell-${x}-${y}`} className="relative w-full h-full flex items-center justify-center bg-white/5 border-[0.5px] border-white/10 rounded-none">
+                        <div key={`cell-${x}-${y}`} className="relative w-full h-full flex items-center justify-center bg-black/[0.02] border-[0.5px] border-black/5 rounded-none">
                             <AnimatePresence mode="popLayout">
                                 {block && (
                                     <Block
@@ -63,34 +61,6 @@ export const Grid = ({ smallBlocks, bigBlocks, onBlockClick }: GridProps) => {
                     );
                 })
             ))}
-
-            {/* Big Blocks Layer (Absolute Overlay) */}
-            <AnimatePresence>
-                {bigBlocks.map((block) => {
-                    const left = `${block.x * 20}%`;
-                    const top = `${block.y * 20}%`;
-                    const size = '40%'; // 2x2 = 40% width/height
-
-                    return (
-                        <div
-                            key={block.id}
-                            style={{
-                                position: 'absolute',
-                                left, top, width: size, height: size,
-                                padding: '1px', // sync with grid gap
-                                zIndex: 10
-                            }}
-                        >
-                            <Block
-                                type="big"
-                                color={block.color}
-                                onReaction={handleGridReaction}
-                                onClick={() => onBlockClick(block.x, block.y)} // Pass grid coords
-                            />
-                        </div>
-                    );
-                })}
-            </AnimatePresence>
         </motion.div>
     );
 };

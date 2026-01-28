@@ -9,9 +9,7 @@ function App() {
     <main className="relative w-full min-h-screen bg-white text-black overflow-hidden font-sans">
       <GameContainer
         smallBlocks={game.smallBlocks}
-        bigBlocks={game.bigBlocks}
         slide={game.slide}
-        breakBlock={game.breakBlock}
         score={game.score}
         gameOver={game.gameOver}
         isProcessing={game.isProcessing}
