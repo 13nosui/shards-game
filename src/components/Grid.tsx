@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react';
 import { Block } from './Block';
 import type { GridState } from '../types/game';
 import { GRID_SIZE } from '../utils/gameUtils';
@@ -9,12 +8,6 @@ interface GridProps {
 }
 
 export const Grid = ({ smallBlocks }: GridProps) => {
-    const [pulse, setPulse] = useState(0);
-
-    const handleGridReaction = useCallback(() => {
-        setPulse(p => p + 1);
-    }, []);
-
     return (
         <motion.div
             animate={{
@@ -28,7 +21,6 @@ export const Grid = ({ smallBlocks }: GridProps) => {
                 stiffness: 500,
                 damping: 30
             }}
-            key={pulse} // Trigger animation on state change
             className="relative bg-white border border-black/5 grid-inner-shadow overflow-hidden"
             style={{
                 width: 'var(--grid-width)',
@@ -52,7 +44,6 @@ export const Grid = ({ smallBlocks }: GridProps) => {
                                         key={block.id}
                                         type="small"
                                         color={block.color}
-                                        onReaction={handleGridReaction}
                                         onClick={() => { }} // Small blocks not clickable
                                     />
                                 )}
