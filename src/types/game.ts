@@ -1,16 +1,22 @@
 export type BlockType = 'big' | 'small';
 
-export interface Block {
+export interface SmallBlock {
     id: string;
-    type: BlockType;
     color: string;
 }
 
-export type GridState = (Block | null)[][];
+export interface BigBlock {
+    id: string;
+    x: number;
+    y: number;
+    color: string; // #555555
+}
+
+export type GridState = (SmallBlock | null)[][];
 
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 
 export interface Point {
-    r: number;
-    c: number;
+    x: number;
+    y: number;
 }
