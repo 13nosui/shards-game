@@ -7,7 +7,7 @@ export const CreditsModal = () => {
         <Dialog.Root>
             <Dialog.Trigger>
                 <IconButton
-                    variant="soft"
+                    variant="ghost"
                     color="gray"
                     highContrast
                     size="3"
@@ -38,22 +38,27 @@ export const CreditsModal = () => {
 
                         <Box>
                             <Heading size="3" mb="2">Special Thanks</Heading>
-                            <Flex direction="row" gap="2" wrap="wrap">
-                                {creditsData.specialThanks.map((name, index) => (
-                                    <Text key={index} size="2" className="opacity-70">
-                                        {name}{index < creditsData.specialThanks.length - 1 ? ' •' : ''}
-                                    </Text>
-                                ))}
-                            </Flex>
+                            {creditsData.specialThanks.length > 0 ? (
+                                <Flex direction="row" gap="2" wrap="wrap">
+                                    {creditsData.specialThanks.map((name, index) => (
+                                        <Text key={index} size="2" className="opacity-70">
+                                            {name}{index < creditsData.specialThanks.length - 1 ? ' •' : ''}
+                                        </Text>
+                                    ))}
+                                </Flex>
+                            ) : (
+                                <Text size="2" color="gray" className="italic">
+                                    Looking for our first supporters... is that you?
+                                </Text>
+                            )}
                         </Box>
                     </Flex>
                 </ScrollArea>
 
                 <Flex gap="3" mt="5" justify="end" align="center">
-                    <Text size="1" color="gray">Want to be in the credits?</Text>
-                    <Button variant="soft" asChild>
+                    <Button variant="solid" asChild>
                         <a href={creditsData.feedbackUrl} target="_blank" rel="noopener noreferrer">
-                            Send Feedback
+                            Join the Credits / Give Feedback
                         </a>
                     </Button>
                     <Dialog.Close>
