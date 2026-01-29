@@ -11,6 +11,7 @@ interface GameContainerProps {
     isProcessing: boolean;
     nextSpawnColors: string[];
     nextSpawnPos: Point | null;
+    bumpEvent: { x: number; y: number; id: number } | null;
 }
 
 export const GameContainer = ({
@@ -20,7 +21,8 @@ export const GameContainer = ({
     gameOver,
     isProcessing,
     nextSpawnColors,
-    nextSpawnPos
+    nextSpawnPos,
+    bumpEvent
 }: GameContainerProps) => {
 
     const handleSlide = useCallback((dir: Direction) => {
@@ -70,6 +72,7 @@ export const GameContainer = ({
                 smallBlocks={smallBlocks}
                 nextSpawnPos={nextSpawnPos}
                 nextSpawnColors={nextSpawnColors}
+                bumpEvent={bumpEvent}
             />
 
             <div className="flex flex-col items-center gap-1">

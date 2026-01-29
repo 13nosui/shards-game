@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion-3d';
 import { COLORS, GRID_SIZE } from '../../utils/gameUtils';
 
@@ -8,9 +8,30 @@ interface Block3DProps {
     type: 'small';
     color: string;
     isGhost?: boolean;
+    bumpEvent?: { x: number; y: number; id: number } | null;
 }
 
-export const Block3D = ({ x, y, color, isGhost = false }: Block3DProps) => {
+export const Block3D = ({ x, y, color, isGhost = false, bumpEvent }: Block3DProps) => {
+    const [bumpOffset, setBumpOffset] = useState({ x: 0, z: 0 });
+
+    // Handle blocked move "jelly" feedback
+    useEffect(() => {
+        if (bumpEvent) {
+            // Apply a small pull in the attempted direction
+            setBumpOffset({
+                x: bumpEvent.x * 0.2,
+                z: bumpEvent.y * 0.2
+            });
+
+            // Quick reset to trigger the spring snap-back
+            const timer = setTimeout(() => {
+                setBumpOffset({ x: 0, z: 0 });
+            }, 60);
+
+            return () => clearTimeout(timer);
+        }
+    }, [bumpEvent]);
+
     // Random stagger for spawn animation
     const spawnDelay = useMemo(() => isGhost ? 0 : Math.random() * 0.15, [isGhost]);
 
@@ -35,9 +56,9 @@ export const Block3D = ({ x, y, color, isGhost = false }: Block3DProps) => {
             animate={{
                 scale: isGhost ? [0.95, 1, 0.95] : 1,
                 opacity: isGhost ? [0.2, 0.4, 0.2] : 1,
-                x: targetX,
+                x: targetX + bumpOffset.x,
                 y: size / 2,
-                z: targetZ
+                z: targetZ + bumpOffset.z
             }}
             exit={{ scale: 0 }}
             castShadow={!isGhost}

@@ -9,9 +9,10 @@ interface GameSceneProps {
     smallBlocks: GridState;
     nextSpawnPos: Point | null;
     nextSpawnColors: string[];
+    bumpEvent: { x: number; y: number; id: number } | null;
 }
 
-export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors }: GameSceneProps) => {
+export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEvent }: GameSceneProps) => {
     return (
         <div style={{ width: 'min(90vw, 500px)', height: 'min(90vw, 500px)', position: 'relative' }}>
             <Canvas shadows dpr={[1, 2]}>
@@ -46,6 +47,7 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors }: GameSc
                                     y={y}
                                     type="small"
                                     color={block.color}
+                                    bumpEvent={bumpEvent}
                                 />
                             );
                         })
@@ -53,10 +55,10 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors }: GameSc
 
                     {nextSpawnPos && nextSpawnColors.length === 4 && (
                         <>
-                            <Block3D key="ghost-0" x={nextSpawnPos.x} y={nextSpawnPos.y} type="small" color={nextSpawnColors[0]} isGhost />
-                            <Block3D key="ghost-1" x={nextSpawnPos.x + 1} y={nextSpawnPos.y} type="small" color={nextSpawnColors[2]} isGhost />
-                            <Block3D key="ghost-2" x={nextSpawnPos.x} y={nextSpawnPos.y + 1} type="small" color={nextSpawnColors[1]} isGhost />
-                            <Block3D key="ghost-3" x={nextSpawnPos.x + 1} y={nextSpawnPos.y + 1} type="small" color={nextSpawnColors[3]} isGhost />
+                            <Block3D key="ghost-0" x={nextSpawnPos.x} y={nextSpawnPos.y} type="small" color={nextSpawnColors[0]} isGhost bumpEvent={bumpEvent} />
+                            <Block3D key="ghost-1" x={nextSpawnPos.x + 1} y={nextSpawnPos.y} type="small" color={nextSpawnColors[2]} isGhost bumpEvent={bumpEvent} />
+                            <Block3D key="ghost-2" x={nextSpawnPos.x} y={nextSpawnPos.y + 1} type="small" color={nextSpawnColors[1]} isGhost bumpEvent={bumpEvent} />
+                            <Block3D key="ghost-3" x={nextSpawnPos.x + 1} y={nextSpawnPos.y + 1} type="small" color={nextSpawnColors[3]} isGhost bumpEvent={bumpEvent} />
                         </>
                     )}
                 </AnimatePresence>

@@ -34,6 +34,7 @@ export const useGameLogic = () => {
     const [gameOver, setGameOver] = useState(false);
     const [nextSpawnColors, setNextSpawnColors] = useState<string[]>([]);
     const [nextSpawnPos, setNextSpawnPos] = useState<Point | null>(null);
+    const [bumpEvent, setBumpEvent] = useState<{ x: number, y: number, id: number } | null>(null);
 
     const spawn2x2At = (grid: GridState, pos: Point, colors: string[]): GridState => {
         const newGrid = grid.map(row => [...row]);
@@ -152,8 +153,11 @@ export const useGameLogic = () => {
             setSmallBlocks(newGrid);
             // We moved, so we trigger the end-turn sequence (2x2 Spawn + Match)
             endTurn(newGrid, dx, dy);
+        } else {
+            // "Jelly" recoil feedback for blocked move
+            setBumpEvent({ x: dx, y: dy, id: Date.now() });
         }
     }, [smallBlocks, isProcessing, gameOver]);
 
-    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos };
+    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent };
 };
