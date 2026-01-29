@@ -172,3 +172,19 @@ export const hasPossibleMatches = (grid: GridState): boolean => {
 
     return false;
 };
+// 移動可能か（どこにスライドしても動かない = 詰み）
+export const hasPossibleMoves = (grid: GridState): boolean => {
+    const directions = [
+        { dx: -1, dy: 0 },
+        { dx: 1, dy: 0 },
+        { dx: 0, dy: -1 },
+        { dx: 0, dy: 1 }
+    ];
+
+    for (const { dx, dy } of directions) {
+        const { moved } = slideGrid(grid, dx, dy);
+        if (moved) return true;
+    }
+
+    return false;
+};

@@ -7,7 +7,8 @@ import {
     getAllMatches,
     slideGrid,
     findRandom2x2EmptyArea,
-    is2x2AreaEmpty
+    is2x2AreaEmpty,
+    hasPossibleMoves
 } from '../utils/gameUtils';
 import { playSound } from '../utils/sounds';
 
@@ -150,22 +151,30 @@ export const useGameLogic = () => {
             pos = findRandom2x2EmptyArea(gridAfterSlide);
         }
 
-        if (!pos) {
-            setGameOver(true);
-            setIsProcessing(false);
-            return;
+        let currentGrid = gridAfterSlide;
+
+        if (pos) {
+            // Normal spawn
+            const gridWithNewSpawn = spawn2x2At(gridAfterSlide, pos, nextSpawnColors);
+            setSmallBlocks(gridWithNewSpawn);
+            setNextSpawnColors(generateSpawnColors());
+            currentGrid = gridWithNewSpawn;
+        } else {
+            // Spawn blocked: Check if we are truly stuck
+            if (!hasPossibleMoves(gridAfterSlide)) {
+                setGameOver(true);
+                setIsProcessing(false);
+                return;
+            }
+            // If moves are possible, skip spawn but continue game logic
+            setSmallBlocks(gridAfterSlide);
+            currentGrid = gridAfterSlide;
         }
 
-        const gridWithNewSpawn = spawn2x2At(gridAfterSlide, pos, nextSpawnColors);
-
-        setSmallBlocks(gridWithNewSpawn);
-        setNextSpawnColors(generateSpawnColors());
-
-        // Wait for spawn animation (200ms)
+        // Wait for potential spawn animation
         await new Promise(r => setTimeout(r, 200));
 
         // 2. Chain Reaction Matches
-        let currentGrid = gridWithNewSpawn;
         let loop = true;
         let currentTurnMatches = false;
         let activeCombo = comboCount;
