@@ -1,0 +1,18 @@
+{
+    "developers": [
+        {
+            "role": "Creator",
+            "name": "Your Name"
+        },
+        {
+            "role": "AI Agent",
+            "name": "Gemini & Antigravity"
+        }
+    ],
+    "specialThanks": [
+        "Player One",
+        "Early Adopter",
+        "Puzzle Fanatic"
+    ],
+    "feedbackUrl": "https://forms.google.com/your-form-id"
+}

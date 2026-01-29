@@ -3,8 +3,9 @@ import { useGameLogic } from './hooks/useGameLogic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from './context/ThemeContext'
 import { useBGM } from './hooks/useBGM'
+import { CreditsModal } from './components/CreditsModal'
 import { Sun, Moon, Volume2, VolumeX } from 'lucide-react'
-import { IconButton } from '@radix-ui/themes'
+import { IconButton, Flex } from '@radix-ui/themes'
 
 function App() {
   const game = useGameLogic();
@@ -27,18 +28,21 @@ function App() {
         </IconButton>
       </div>
 
-      {/* Theme Toggle Button */}
+      {/* Top Right Controls */}
       <div className="absolute top-6 right-6 z-50">
-        <IconButton
-          variant="soft"
-          color="gray"
-          highContrast
-          onClick={toggleTheme}
-          size="3"
-          className="cursor-pointer"
-        >
-          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-        </IconButton>
+        <Flex gap="3">
+          <CreditsModal />
+          <IconButton
+            variant="soft"
+            color="gray"
+            highContrast
+            onClick={toggleTheme}
+            size="3"
+            className="cursor-pointer"
+          >
+            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          </IconButton>
+        </Flex>
       </div>
 
       <GameContainer
