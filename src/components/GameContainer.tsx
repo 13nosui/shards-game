@@ -45,7 +45,7 @@ export const GameContainer = ({
     }, [handleSlide]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 gap-8 select-none w-full max-w-[600px] mx-auto relative">
+        <div className="flex flex-col items-center justify-center p-4 gap-8 select-none w-[95vw] max-w-[600px] mx-auto relative">
             {/* Combo Indicator */}
             <AnimatePresence>
                 {comboCount > 1 && (

@@ -14,11 +14,11 @@ interface GameSceneProps {
 
 export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEvent }: GameSceneProps) => {
     return (
-        <div style={{ width: 'min(90vw, 500px)', height: 'min(90vw, 500px)', position: 'relative' }}>
+        <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }}>
             <Canvas shadows dpr={[1, 2]}>
                 <PerspectiveCamera
                     makeDefault
-                    position={[0, 11, 0]}
+                    position={[0, 8.5, 0]}
                     up={[0, 0, -1]}
                     fov={50}
                     onUpdate={(c) => c.lookAt(0, 0, 0)}
