@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { Direction, GridState, Point } from '../types/game';
 import { GameScene } from './3d/GameScene';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,9 +27,36 @@ export const GameContainer = ({
     comboCount
 }: GameContainerProps) => {
 
+    const [touchStart, setTouchStart] = useState<{ x: number, y: number } | null>(null);
+
     const handleSlide = useCallback((dir: Direction) => {
         slide(dir);
     }, [slide]);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        const touch = e.touches[0];
+        setTouchStart({ x: touch.clientX, y: touch.clientY });
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (!touchStart) return;
+
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - touchStart.x;
+        const deltaY = touch.clientY - touchStart.y;
+        const threshold = 30;
+
+        if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal Swipe
+                handleSlide(deltaX > 0 ? 'RIGHT' : 'LEFT');
+            } else {
+                // Vertical Swipe
+                handleSlide(deltaY > 0 ? 'DOWN' : 'UP');
+            }
+        }
+        setTouchStart(null);
+    };
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -45,7 +72,11 @@ export const GameContainer = ({
     }, [handleSlide]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-0 gap-8 select-none w-[95vw] max-w-[600px] mx-auto relative text-center">
+        <div
+            className="flex flex-col items-center justify-center p-0 gap-8 select-none w-[95vw] max-w-[600px] mx-auto relative text-center touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
             {/* Combo Indicator */}
             <AnimatePresence>
                 {comboCount > 1 && (
@@ -115,7 +146,7 @@ export const GameContainer = ({
             </div>
 
             <div className="text-[10px] font-mono opacity-30 text-center uppercase tracking-widest">
-                ARROWS TO SLIDE<br />
+                ARROWS or SWIPE TO SLIDE<br />
                 MATCH 3+ COLORS (ORTHO or DIAG)
             </div>
         </div>
