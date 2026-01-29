@@ -2,15 +2,31 @@ import { GameContainer } from './components/GameContainer'
 import { useGameLogic } from './hooks/useGameLogic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from './context/ThemeContext'
-import { Sun, Moon } from 'lucide-react'
+import { useBGM } from './hooks/useBGM'
+import { Sun, Moon, Volume2, VolumeX } from 'lucide-react'
 import { IconButton } from '@radix-ui/themes'
 
 function App() {
   const game = useGameLogic();
   const { theme, toggleTheme } = useTheme();
+  const { isPlaying, toggleBGM } = useBGM('/sounds/bgm.mp3');
 
   return (
     <main className="relative w-full min-h-screen overflow-hidden font-sans flex flex-col items-center justify-center bg-[var(--color-background)] text-[var(--gray-12)]">
+      {/* BGM Toggle Button */}
+      <div className="absolute top-6 left-6 z-50">
+        <IconButton
+          variant="soft"
+          color="gray"
+          highContrast
+          onClick={toggleBGM}
+          size="3"
+          className="cursor-pointer"
+        >
+          {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
+        </IconButton>
+      </div>
+
       {/* Theme Toggle Button */}
       <div className="absolute top-6 right-6 z-50">
         <IconButton
