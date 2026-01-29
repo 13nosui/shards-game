@@ -5,8 +5,6 @@ import { Block3D } from './Block3D';
 import type { GridState, Point } from '../../types/game';
 import { AnimatePresence } from 'framer-motion';
 
-import { GRID_SIZE } from '../../utils/gameUtils';
-
 interface GameSceneProps {
     smallBlocks: GridState;
     nextSpawnPos: Point | null;
@@ -15,22 +13,20 @@ interface GameSceneProps {
 }
 
 export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEvent }: GameSceneProps) => {
-    const center = (GRID_SIZE - 1) / 2;
-
     return (
         <div style={{ width: 'min(90vw, 500px)', height: 'min(90vw, 500px)', position: 'relative' }}>
             <Canvas shadows dpr={[1, 2]}>
                 <PerspectiveCamera
                     makeDefault
-                    position={[center, 10, center]}
+                    position={[0, 11, 0]}
                     up={[0, 0, -1]}
                     fov={50}
-                    onUpdate={(c) => c.lookAt(center, 0, center)}
+                    onUpdate={(c) => c.lookAt(0, 0, 0)}
                 />
 
                 <ambientLight intensity={1.2} color="#ffffff" />
                 <directionalLight
-                    position={[GRID_SIZE, 10, GRID_SIZE]}
+                    position={[5, 10, 5]}
                     intensity={0.8}
                     color="#ffffff"
                     castShadow
