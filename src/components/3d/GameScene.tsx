@@ -49,7 +49,7 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEven
             position: 'relative',
             margin: '0 auto'
         }}>
-            <Canvas shadows dpr={[1, 2]}>
+            <Canvas shadows dpr={[1, 2]} gl={{ antialias: false }}>
                 <PerspectiveCamera
                     makeDefault
                     position={[0, 12, 0]}
