@@ -35,6 +35,7 @@ export const useGameLogic = () => {
     const [nextSpawnColors, setNextSpawnColors] = useState<string[]>([]);
     const [nextSpawnPos, setNextSpawnPos] = useState<Point | null>(null);
     const [bumpEvent, setBumpEvent] = useState<{ x: number, y: number, id: number } | null>(null);
+    const [comboCount, setComboCount] = useState(0);
 
     const spawn2x2At = (grid: GridState, pos: Point, colors: string[]): GridState => {
         const newGrid = grid.map(row => [...row]);
@@ -61,6 +62,7 @@ export const useGameLogic = () => {
         setNextSpawnColors(nextBatch);
         setNextSpawnPos(findRandom2x2EmptyArea(pos ? spawn2x2At(emptyGrid, pos, initialColors) : emptyGrid));
         setScore(0);
+        setComboCount(0);
         setGameOver(false);
         setIsProcessing(false);
     }, []);
@@ -98,6 +100,8 @@ export const useGameLogic = () => {
         // 2. Chain Reaction Matches
         let currentGrid = gridWithNewSpawn;
         let loop = true;
+        let currentTurnMatches = false;
+        let activeCombo = comboCount;
 
         while (loop) {
             const matches = getAllMatches(currentGrid);
@@ -106,8 +110,13 @@ export const useGameLogic = () => {
                 break;
             }
 
+            currentTurnMatches = true;
+            activeCombo++;
+
             playSound('match');
-            setScore(s => s + matches.length * 100);
+            const baseScore = matches.length * 100;
+            const bonus = activeCombo * 50; // 50 points per combo level
+            setScore(s => s + baseScore + bonus);
 
             const tempGrid = currentGrid.map(row => [...row]);
             matches.forEach(p => { tempGrid[p.x][p.y] = null; });
@@ -125,6 +134,13 @@ export const useGameLogic = () => {
                 currentGrid = tempGrid;
                 loop = false;
             }
+        }
+
+        // 3. Resolve Combo State
+        if (currentTurnMatches) {
+            setComboCount(activeCombo);
+        } else {
+            setComboCount(0);
         }
 
         // Final check for 2x2 space after all matches and falls
@@ -159,5 +175,5 @@ export const useGameLogic = () => {
         }
     }, [smallBlocks, isProcessing, gameOver]);
 
-    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent };
+    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent, comboCount };
 };

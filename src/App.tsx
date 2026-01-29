@@ -16,6 +16,7 @@ function App() {
         nextSpawnColors={game.nextSpawnColors}
         nextSpawnPos={game.nextSpawnPos}
         bumpEvent={game.bumpEvent}
+        comboCount={game.comboCount}
       />
 
       <AnimatePresence>

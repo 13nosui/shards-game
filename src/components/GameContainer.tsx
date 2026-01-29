@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import type { Direction, GridState, Point } from '../types/game';
 import { GameScene } from './3d/GameScene';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface GameContainerProps {
     smallBlocks: GridState;
@@ -12,6 +12,7 @@ interface GameContainerProps {
     nextSpawnColors: string[];
     nextSpawnPos: Point | null;
     bumpEvent: { x: number; y: number; id: number } | null;
+    comboCount: number;
 }
 
 export const GameContainer = ({
@@ -22,7 +23,8 @@ export const GameContainer = ({
     isProcessing,
     nextSpawnColors,
     nextSpawnPos,
-    bumpEvent
+    bumpEvent,
+    comboCount
 }: GameContainerProps) => {
 
     const handleSlide = useCallback((dir: Direction) => {
@@ -43,7 +45,32 @@ export const GameContainer = ({
     }, [handleSlide]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 gap-8 select-none w-full max-w-[600px] mx-auto">
+        <div className="flex flex-col items-center justify-center p-4 gap-8 select-none w-full max-w-[600px] mx-auto relative">
+            {/* Combo Indicator */}
+            <AnimatePresence>
+                {comboCount > 1 && (
+                    <motion.div
+                        initial={{ scale: 0, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0, opacity: 0, y: -20 }}
+                        className="absolute top-20 right-4 z-50 flex flex-col items-center"
+                    >
+                        <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                            className="flex flex-col items-center"
+                        >
+                            <span className="text-5xl font-black text-amber-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] italic leading-tight">
+                                {comboCount}
+                            </span>
+                            <span className="text-[10px] font-black text-white bg-ruby-500 px-3 py-0.5 rounded-full shadow-lg -mt-1 tracking-widest uppercase">
+                                COMBO
+                            </span>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="flex flex-col items-center gap-2">
                 <h1 className="text-4xl font-mono font-bold tracking-[0.2em] uppercase">SHARDS</h1>
                 <div className="text-xs font-mono opacity-50 uppercase tracking-widest">
