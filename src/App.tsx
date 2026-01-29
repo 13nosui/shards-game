@@ -29,6 +29,7 @@ function App() {
         smallBlocks={game.smallBlocks}
         slide={game.slide}
         score={game.score}
+        highScore={game.highScore}
         gameOver={game.gameOver}
         isProcessing={game.isProcessing}
         nextSpawnColors={game.nextSpawnColors}

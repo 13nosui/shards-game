@@ -24,12 +24,16 @@ const generateSpawnColors = (): string[] => {
     return selectedColors;
 };
 
+const STORAGE_KEY = 'shards-game-state';
+const HIGHSCORE_KEY = 'shards-highscore';
+
 export const useGameLogic = () => {
     const [smallBlocks, setSmallBlocks] = useState<GridState>(() =>
         Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null))
     );
 
     const [score, setScore] = useState(0);
+    const [highScore, setHighScore] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [nextSpawnColors, setNextSpawnColors] = useState<string[]>([]);
@@ -65,11 +69,64 @@ export const useGameLogic = () => {
         setComboCount(0);
         setGameOver(false);
         setIsProcessing(false);
+
+        // Clear saved game state but keep high score
+        localStorage.removeItem(STORAGE_KEY);
     }, []);
 
+    // Load High Score and Game State on mount
     useEffect(() => {
+        // Load High Score
+        const savedHighScore = localStorage.getItem(HIGHSCORE_KEY);
+        if (savedHighScore) {
+            setHighScore(parseInt(savedHighScore, 10));
+        }
+
+        // Load Game State
+        const savedState = localStorage.getItem(STORAGE_KEY);
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                setSmallBlocks(state.smallBlocks);
+                setScore(state.score);
+                setNextSpawnColors(state.nextSpawnColors);
+                setNextSpawnPos(state.nextSpawnPos);
+                setComboCount(state.comboCount);
+                setGameOver(false);
+                setIsProcessing(false);
+                return;
+            } catch (e) {
+                console.error("Failed to load saved state", e);
+            }
+        }
+
+        // If no saved state or error, start fresh
         resetGame();
     }, [resetGame]);
+
+    // Save Game State on changes
+    useEffect(() => {
+        if (!gameOver && smallBlocks.some(row => row.some(cell => cell !== null))) {
+            const state = {
+                smallBlocks,
+                score,
+                nextSpawnColors,
+                nextSpawnPos,
+                comboCount
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } else if (gameOver) {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    }, [smallBlocks, score, nextSpawnColors, nextSpawnPos, comboCount, gameOver]);
+
+    // Update High Score
+    useEffect(() => {
+        if (score > highScore) {
+            setHighScore(score);
+            localStorage.setItem(HIGHSCORE_KEY, score.toString());
+        }
+    }, [score, highScore]);
 
     // Turn end check: Spawning 2x2 and matching
     const endTurn = async (gridAfterSlide: GridState, dx: number, dy: number) => {
@@ -175,5 +232,5 @@ export const useGameLogic = () => {
         }
     }, [smallBlocks, isProcessing, gameOver]);
 
-    return { smallBlocks, slide, score, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent, comboCount };
+    return { smallBlocks, slide, score, highScore, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent, comboCount };
 };

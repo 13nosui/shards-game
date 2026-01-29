@@ -7,6 +7,7 @@ interface GameContainerProps {
     smallBlocks: GridState;
     slide: (direction: Direction) => void;
     score: number;
+    highScore: number;
     gameOver: boolean;
     isProcessing: boolean;
     nextSpawnColors: string[];
@@ -19,6 +20,7 @@ export const GameContainer = ({
     smallBlocks,
     slide,
     score,
+    highScore,
     gameOver,
     isProcessing,
     nextSpawnColors,
@@ -134,7 +136,13 @@ export const GameContainer = ({
             />
 
             <div className="flex flex-col items-center gap-1">
-                <div className="text-xs font-mono uppercase tracking-widest opacity-30">Score</div>
+                <div className="flex flex-col items-center">
+                    <div className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-30">Best Score</div>
+                    <div className="text-sm font-bungee opacity-30 mt-[-2px]">
+                        {highScore.toString().padStart(6, '0')}
+                    </div>
+                </div>
+                <div className="text-xs font-mono uppercase tracking-widest opacity-30 mt-2">Current Score</div>
                 <motion.div
                     key={score}
                     initial={{ y: -5, opacity: 0 }}
