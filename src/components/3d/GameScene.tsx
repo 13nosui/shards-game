@@ -88,6 +88,7 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEven
                         })
                     )}
 
+                    {/* Ghost blocks temporarily hidden
                     {nextSpawnPos && nextSpawnColors.length === 4 && (
                         <>
                             <Block3D key="ghost-0" x={nextSpawnPos.x} y={nextSpawnPos.y} type="small" color={nextSpawnColors[0]} isGhost bumpEvent={bumpEvent} />
@@ -96,6 +97,7 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEven
                             <Block3D key="ghost-3" x={nextSpawnPos.x + 1} y={nextSpawnPos.y + 1} type="small" color={nextSpawnColors[3]} isGhost bumpEvent={bumpEvent} />
                         </>
                     )}
+                    */}
                 </AnimatePresence>
             </Canvas>
         </div>
