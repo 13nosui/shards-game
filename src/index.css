@@ -14,8 +14,8 @@
 
 :root {
   font-family: var(--font-sans);
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--color-background);
+  color: var(--gray-12);
 
   --grid-width: min(90vw, 500px);
   --grid-gap: 4px;
@@ -30,7 +30,7 @@ body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--color-background);
 }
 
 #root {
