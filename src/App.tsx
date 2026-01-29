@@ -15,6 +15,7 @@ function App() {
         isProcessing={game.isProcessing}
         nextSpawnColors={game.nextSpawnColors}
         nextSpawnPos={game.nextSpawnPos}
+        bumpEvent={game.bumpEvent}
       />
 
       <AnimatePresence>
