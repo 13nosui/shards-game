@@ -1,9 +1,37 @@
-import { Canvas } from '@react-three/fiber';
+import { useEffect } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { ReactiveGrid } from './ReactiveGrid';
 import { Block3D } from './Block3D';
 import type { GridState, Point } from '../../types/game';
+import { GRID_SIZE } from '../../utils/gameUtils';
 import { AnimatePresence } from 'framer-motion';
+
+const CameraController = () => {
+    const { camera, size } = useThree();
+
+    useEffect(() => {
+        const aspect = size.width / size.height;
+        // Target size includes margin for animations (approx 15% padding)
+        const targetSize = GRID_SIZE * 1.15;
+
+        const fov = 50;
+        const fovRad = (fov * Math.PI) / 180;
+
+        let dist = (targetSize / 2) / Math.tan(fovRad / 2);
+
+        if (aspect < 1) {
+            dist = dist / aspect;
+        }
+
+        camera.position.set(0, dist, 0);
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+
+    }, [camera, size]);
+
+    return null;
+};
 
 interface GameSceneProps {
     smallBlocks: GridState;
@@ -14,7 +42,13 @@ interface GameSceneProps {
 
 export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEvent }: GameSceneProps) => {
     return (
-        <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }}>
+        <div style={{
+            width: '100%',
+            maxHeight: '70vh',
+            aspectRatio: '1/1',
+            position: 'relative',
+            margin: '0 auto'
+        }}>
             <Canvas shadows dpr={[1, 2]}>
                 <PerspectiveCamera
                     makeDefault
@@ -23,6 +57,8 @@ export const GameScene = ({ smallBlocks, nextSpawnPos, nextSpawnColors, bumpEven
                     fov={50}
                     onUpdate={(c) => c.lookAt(0, 0, 0)}
                 />
+
+                <CameraController />
 
                 <ambientLight intensity={1.2} color="#ffffff" />
                 <directionalLight
