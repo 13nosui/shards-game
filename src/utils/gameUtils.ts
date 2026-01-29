@@ -2,12 +2,12 @@ import type { GridState, Point, SmallBlock } from '../types/game';
 
 export const GRID_SIZE = 5;
 
-// p5.js: COLORS definition
+// Radix UI Step 9 (Solid Background) colors
 export const COLORS = [
-    '#FF0033', // Red
-    '#0066FF', // Blue
-    '#FFCC00', // Yellow
-    '#33CC33'  // Green
+    '#E54D2E', // Ruby 9 (Red)
+    '#3E63DD', // Indigo 9 (Blue)
+    '#FFC53D', // Amber 9 (Yellow)
+    '#46A758'  // Grass 9 (Green)
 ];
 
 export const createSmallBlock = (color?: string): SmallBlock => ({
