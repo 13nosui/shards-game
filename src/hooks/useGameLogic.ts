@@ -44,6 +44,23 @@ export const useGameLogic = () => {
         return newGrid;
     };
 
+    const spawnBonusAt = (grid: GridState, pos: Point, colors: string[]): GridState => {
+        const newGrid = grid.map(row => [...row]);
+        const spots = [
+            { x: pos.x, y: pos.y },
+            { x: pos.x + 1, y: pos.y },
+            { x: pos.x, y: pos.y + 1 },
+            { x: pos.x + 1, y: pos.y + 1 }
+        ];
+        // Shuffle and pick 2 random spots within the 2x2 area
+        const selectedSpots = spots.sort(() => Math.random() - 0.5).slice(0, 2);
+
+        newGrid[selectedSpots[0].x][selectedSpots[0].y] = createSmallBlock(colors[0]);
+        newGrid[selectedSpots[1].x][selectedSpots[1].y] = createSmallBlock(colors[1]);
+
+        return newGrid;
+    };
+
     const resetGame = useCallback(() => {
         const emptyGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
         const pos = findRandom2x2EmptyArea(emptyGrid);
@@ -72,7 +89,11 @@ export const useGameLogic = () => {
     const endTurn = async (gridAfterSlide: GridState, dx: number, dy: number) => {
         setIsProcessing(true);
 
-        // 1. Spawning 2x2 Cluster
+        // 1. Check for matches BEFORE spawning (Risk/Reward Bonus)
+        const preSpawnMatches = getAllMatches(gridAfterSlide);
+        const isBonusTurn = preSpawnMatches.length > 0;
+
+        // 2. Spawning 2x2 Cluster (or Bonus Spawn)
         let pos = nextSpawnPos;
 
         // If the pre-calculated position is now blocked, find a new one
@@ -86,7 +107,11 @@ export const useGameLogic = () => {
             return;
         }
 
-        const gridWithNewSpawn = spawn2x2At(gridAfterSlide, pos, nextSpawnColors);
+        // Reduced spawn if a match was made during the slide
+        const gridWithNewSpawn = isBonusTurn
+            ? spawnBonusAt(gridAfterSlide, pos, nextSpawnColors)
+            : spawn2x2At(gridAfterSlide, pos, nextSpawnColors);
+
         setSmallBlocks(gridWithNewSpawn);
         setNextSpawnColors(generateSpawnColors());
 
