@@ -188,3 +188,34 @@ export const hasPossibleMoves = (grid: GridState): boolean => {
 
     return false;
 };
+
+// Check if any move can clear space for a 2x2 spawn
+export const canClearSpaceForSpawn = (grid: GridState): boolean => {
+    const directions = [{ dx: -1, dy: 0 }, { dx: 1, dy: 0 }, { dx: 0, dy: -1 }, { dx: 0, dy: 1 }];
+
+    for (const { dx, dy } of directions) {
+        // 1. Simulate Slide
+        const { newGrid, moved } = slideGrid(grid, dx, dy);
+        if (!moved) continue;
+
+        // 2. Simulate Matches on the slid grid
+        const matches = getAllMatches(newGrid);
+
+        // If matches exist, simulate clearing them to see if space opens up
+        if (matches.length > 0) {
+            const tempGrid = newGrid.map(row => [...row]);
+            matches.forEach(p => { tempGrid[p.x][p.y] = null; });
+
+            // Check if a 2x2 area is now empty
+            if (findRandom2x2EmptyArea(tempGrid) !== null) {
+                return true; // Survival is possible!
+            }
+        } else {
+            // Even without matches, if the slide itself opened a 2x2 space (unlikely but possible)
+            if (findRandom2x2EmptyArea(newGrid) !== null) {
+                return true;
+            }
+        }
+    }
+    return false; // No move can create space
+};
