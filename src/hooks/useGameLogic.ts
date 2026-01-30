@@ -143,7 +143,7 @@ export const useGameLogic = () => {
     }, [score, highScore]);
 
     // Helper to process matches and gravity (returns the final grid state)
-    const processMatches = async (startGrid: GridState, dx: number = 0, dy: number = 1): Promise<{ finalGrid: GridState, totalMatches: boolean }> => {
+    const processMatches = async (startGrid: GridState, dx: number = 0, dy: number = 0): Promise<{ finalGrid: GridState, totalMatches: boolean }> => {
         let currentGrid = startGrid;
         let loop = true;
         let currentTurnMatches = false;
@@ -228,7 +228,7 @@ export const useGameLogic = () => {
             await new Promise(r => setTimeout(r, 200));
 
             // --- PHASE 4: MATCH (After Spawn) ---
-            const result = await processMatches(gridAfterSpawn, 0, 1);
+            const result = await processMatches(gridAfterSpawn, 0, 0);
             gridAfterSpawn = result.finalGrid;
         } else {
             // Spawn Failed -> GAME OVER
