@@ -1,6 +1,3 @@
-// src/components/3d/Face.tsx
-import React from 'react';
-
 export const Face = () => {
     const eyeColor = "#333333";
     const mouthColor = "#333333";
