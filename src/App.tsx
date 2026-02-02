@@ -7,16 +7,11 @@ import { CreditsModal } from './components/CreditsModal'
 import { Sun, Moon, Volume2, VolumeX } from 'lucide-react'
 import { IconButton, Flex } from '@radix-ui/themes'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useGameLogic } from './hooks/useGameLogic' // useGameLogicからbestScoreを取得するために追加
+// import { useGameLogic } ... は削除しました
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bestScore, setBestScore] = useState(0);
-
-  // useGameLogicのインスタンスを作成して records 等にアクセスできるようにする
-  // ただし、ここではシンプルにLocalStorageから読み込む既存ロジックで十分ならそれでもOKですが、
-  // useGameLogicが管理するrecords配列の先頭(highScore)と同期をとるのが確実です。
-  // 今回は既存の「LocalStorage読み込み」アプローチを維持します。
 
   const { theme, toggleTheme } = useTheme();
   const { isPlaying: isBgmPlaying, toggleBGM } = useBGM('/sounds/bgm.mp3');
@@ -97,7 +92,6 @@ function App() {
         <HomeScreen
           onStart={() => setIsPlaying(true)}
           bestScore={bestScore}
-        // records propを削除
         />
       )}
 
