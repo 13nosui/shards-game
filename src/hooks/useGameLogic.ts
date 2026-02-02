@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { GridState, Direction, Point } from '../types/game';
+import type { GridState, Direction, Point, GameRecord } from '../types/game';
 import {
     GRID_SIZE,
     COLORS,
@@ -26,6 +26,7 @@ const generateSpawnColors = (): string[] => {
 };
 
 const STORAGE_KEY = 'quod-state';
+const RECORDS_KEY = 'quod-records';
 const HIGHSCORE_KEY = 'quod-highscore';
 const HIGHSCORE_DATE_KEY = 'quod-highscore-date';
 
@@ -35,8 +36,8 @@ export const useGameLogic = () => {
     );
 
     const [score, setScore] = useState(0);
-    const [highScore, setHighScore] = useState(0);
-    const [highScoreDate, setHighScoreDate] = useState<string | null>(null);
+    const [records, setRecords] = useState<GameRecord[]>([]);
+    const [highScoreDate, _setHighScoreDate] = useState<string | null>(null);
     const [isNewRecord, setIsNewRecord] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [gameOver, setGameOver] = useState(false);
@@ -86,23 +87,50 @@ export const useGameLogic = () => {
         setGameOver(true);
         setIsProcessing(false);
 
-        if (finalScore > highScore) {
-            setHighScore(finalScore);
-            setIsNewRecord(true); // 紙吹雪フラグON
+        const newRecord: GameRecord = {
+            id: Date.now().toString(),
+            score: finalScore,
+            date: new Date().toISOString(),
+            grid: JSON.parse(JSON.stringify(smallBlocks)) // Snapshot of the final board
+        };
 
-            localStorage.setItem(HIGHSCORE_KEY, finalScore.toString());
-            const dateStr = new Date().toISOString();
-            localStorage.setItem(HIGHSCORE_DATE_KEY, dateStr);
-            setHighScoreDate(dateStr);
-        }
-    }, [highScore]);
+        setRecords(prev => {
+            const updated = [...prev, newRecord]
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+
+            localStorage.setItem(RECORDS_KEY, JSON.stringify(updated));
+
+            // For backward compatibility and immediate UI update
+            if (updated[0].id === newRecord.id) {
+                setIsNewRecord(true);
+            }
+
+            return updated;
+        });
+    }, [smallBlocks]);
 
     useEffect(() => {
-        const savedHighScore = localStorage.getItem(HIGHSCORE_KEY);
-        if (savedHighScore) setHighScore(parseInt(savedHighScore, 10));
-
-        const savedHighScoreDate = localStorage.getItem(HIGHSCORE_DATE_KEY);
-        if (savedHighScoreDate) setHighScoreDate(savedHighScoreDate);
+        // Load Records
+        const savedRecords = localStorage.getItem(RECORDS_KEY);
+        if (savedRecords) {
+            setRecords(JSON.parse(savedRecords));
+        } else {
+            // Migration from old highscore
+            const oldHighScore = localStorage.getItem(HIGHSCORE_KEY);
+            if (oldHighScore) {
+                const score = parseInt(oldHighScore, 10);
+                const date = localStorage.getItem(HIGHSCORE_DATE_KEY) || new Date().toISOString();
+                const initialRecord: GameRecord = {
+                    id: 'migration-' + Date.now(),
+                    score,
+                    date,
+                    grid: Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null))
+                };
+                setRecords([initialRecord]);
+                localStorage.setItem(RECORDS_KEY, JSON.stringify([initialRecord]));
+            }
+        }
 
         const savedState = localStorage.getItem(STORAGE_KEY);
         if (savedState) {
@@ -245,7 +273,9 @@ export const useGameLogic = () => {
 
         setNextSpawnPos(futurePos);
         setIsProcessing(false);
-    }, [smallBlocks, isProcessing, gameOver, nextSpawnPos, nextSpawnColors, comboCount, highScore, handleGameOver, score]);
+    }, [smallBlocks, isProcessing, gameOver, nextSpawnPos, nextSpawnColors, comboCount, handleGameOver, score]);
 
-    return { smallBlocks, slide, score, highScore, highScoreDate, isNewRecord, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent, comboCount };
+    const highScore = records[0]?.score || 0;
+
+    return { smallBlocks, slide, score, highScore, highScoreDate, records, isNewRecord, gameOver, isProcessing, resetGame, nextSpawnColors, nextSpawnPos, bumpEvent, comboCount };
 };

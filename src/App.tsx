@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GameContainer } from './components/GameContainer'
-import { HomeScreen } from './components/HomeScreen' // 追加
+import { HomeScreen } from './components/HomeScreen'
+import { useGameLogic } from './hooks/useGameLogic'
 import { useTheme } from './context/ThemeContext'
 import { useBGM } from './hooks/useBGM'
 import { CreditsModal } from './components/CreditsModal'
@@ -9,25 +10,16 @@ import { Sun, Moon, Volume2, VolumeX } from 'lucide-react'
 import { IconButton, Flex } from '@radix-ui/themes'
 
 function App() {
-  // ゲーム中かどうかの状態管理
+  const { records, highScore } = useGameLogic();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [bestScore, setBestScore] = useState(0);
 
   const { theme, toggleTheme } = useTheme();
   // BGMパスはプロジェクトに合わせて確認してください
   const { isPlaying: isBgmPlaying, toggleBGM } = useBGM('/sounds/bgm.mp3');
 
-  // アプリ起動時やホームに戻った時にベストスコアを最新化
-  useEffect(() => {
-    // useGameLogicで保存しているキー 'quod-highscore' を使用
-    const saved = localStorage.getItem('quod-highscore');
-    if (saved) {
-      setBestScore(parseInt(saved, 10));
-    }
-  }, [isPlaying]);
-
   return (
     <main className="relative w-full min-h-screen overflow-hidden font-sans flex flex-col items-center justify-center bg-[var(--color-background)] text-[var(--gray-12)] transition-colors duration-300">
+
 
       <AnimatePresence>
         {!isPlaying && (
@@ -82,7 +74,8 @@ function App() {
       ) : (
         <HomeScreen
           onStart={() => setIsPlaying(true)}
-          bestScore={bestScore}
+          bestScore={highScore}
+          records={records}
         />
       )}
 

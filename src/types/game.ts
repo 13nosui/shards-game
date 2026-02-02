@@ -13,3 +13,10 @@ export interface Point {
     x: number;
     y: number;
 }
+
+export interface GameRecord {
+    id: string;
+    score: number;
+    date: string; // ISO string
+    grid: GridState; // Snapshot of the final board
+}
