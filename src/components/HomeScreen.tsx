@@ -1,16 +1,15 @@
 import { motion } from 'framer-motion';
-import { RecordsModal } from './RecordsModal';
-import type { GameRecord } from '../types/game';
+// RecordsModalのインポートを削除
 
 interface HomeScreenProps {
     onStart: () => void;
     bestScore: number;
-    records: GameRecord[];
+    // records: GameRecord[]; // 不要になったので削除
 }
 
-export const HomeScreen = ({ onStart, bestScore, records }: HomeScreenProps) => {
+export const HomeScreen = ({ onStart, bestScore }: HomeScreenProps) => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 z-10">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-12 z-10">
             <div className="flex flex-col items-center gap-4">
                 <motion.h1
                     initial={{ scale: 0.9, opacity: 0 }}
@@ -30,27 +29,21 @@ export const HomeScreen = ({ onStart, bestScore, records }: HomeScreenProps) => 
                 </motion.p>
             </div>
 
-            <div className="flex flex-col items-center gap-4 w-full max-w-[200px]">
-                <motion.button
-                    whileHover={{ scale: 1.05, letterSpacing: "0.1em" }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onStart}
-                    className="w-full py-4 bg-[var(--gray-12)] text-[var(--color-background)] font-bungee text-2xl tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg"
-                >
-                    PLAY
-                </motion.button>
+            <motion.button
+                whileHover={{ scale: 1.05, letterSpacing: "0.1em" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onStart}
+                className="px-16 py-4 bg-[var(--gray-12)] text-[var(--color-background)] font-bungee text-2xl tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg"
+            >
+                PLAY
+            </motion.button>
 
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-widest opacity-40">Records</span>
-                    <RecordsModal records={records} />
-                </div>
-            </div>
-
+            {/* シンプルなベストスコア表示のみ維持 */}
             {bestScore > 0 && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0.4 }}
-                    className="flex flex-col items-center gap-1 font-mono mt-4"
+                    className="flex flex-col items-center gap-1 font-mono mt-8"
                 >
                     <span className="text-[10px] uppercase tracking-widest">Best Score</span>
                     <span className="text-xl font-bungee">{bestScore.toString().padStart(6, '0')}</span>

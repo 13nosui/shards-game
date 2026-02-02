@@ -1,37 +1,9 @@
-import { useEffect } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { ReactiveGrid } from './ReactiveGrid';
 import { Block3D } from './Block3D';
 import type { GridState, Point } from '../../types/game';
-import { GRID_SIZE } from '../../utils/gameUtils';
 import { AnimatePresence } from 'framer-motion';
-
-const CameraController = () => {
-    const { camera, size } = useThree();
-
-    useEffect(() => {
-        const aspect = size.width / size.height;
-        const targetSize = GRID_SIZE * 1.3; // 少し引きの画角に調整
-
-        const fov = 50;
-        const fovRad = (fov * Math.PI) / 180;
-
-        let dist = (targetSize / 2) / Math.tan(fovRad / 2);
-
-        if (aspect < 1) {
-            dist = dist / aspect;
-        }
-
-        // カメラ位置を少し手前に傾けて見やすくする
-        camera.position.set(0, dist, dist * 0.1);
-        camera.lookAt(0, 0, 0);
-        camera.updateProjectionMatrix();
-
-    }, [camera, size]);
-
-    return null;
-};
 
 interface GameSceneProps {
     smallBlocks: GridState;
@@ -56,12 +28,10 @@ export const GameScene = ({ smallBlocks, bumpEvent }: GameSceneProps) => {
             <Canvas shadows dpr={[1, 2]} gl={{ antialias: true }}>
                 <PerspectiveCamera
                     makeDefault
-                    position={[0, 12, 0]}
+                    position={[0, 15, 0]} // 高さを固定し、真上から見下ろす
                     fov={50}
-                // onUpdateでのlookAt強制を削除し、Controllerに任せる
+                    onUpdate={(c) => c.lookAt(0, 0, 0)} // 常に中心を見る
                 />
-
-                <CameraController />
 
                 <ambientLight intensity={1.5} color="#ffffff" />
                 <directionalLight
