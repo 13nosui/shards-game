@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { GameScene } from './3d/GameScene';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,7 +16,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
         slide,
         score,
         highScore,
-        highScoreDate,
         isNewRecord,
         gameOver,
         isProcessing,
@@ -159,8 +158,8 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
                 <GameScene
                     smallBlocks={smallBlocks}
                     nextSpawnPos={nextSpawnPos}
+                    nextSpawnColors={nextSpawnColors}
                     bumpEvent={bumpEvent}
-                    isProcessing={isProcessing}
                 />
             </div>
 
