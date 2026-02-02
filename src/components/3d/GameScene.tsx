@@ -45,7 +45,7 @@ export const GameScene = ({ smallBlocks, bumpEvent }: GameSceneProps) => {
     ).filter((b): b is NonNullable<typeof b> => b !== null);
 
     // --- アイドルアニメーション制御 ---
-    const [idleBlockId, setIdleBlockId] = useState<number | null>(null);
+    const [idleBlockId, setIdleBlockId] = useState<string | null>(null);
     const [idleType, setIdleType] = useState<'sleep' | 'yawn'>('sleep');
 
     useEffect(() => {
