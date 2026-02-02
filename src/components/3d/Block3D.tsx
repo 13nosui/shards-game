@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion-3d';
-import { COLORS, GRID_SIZE } from '../../utils/gameUtils';
+import { GRID_SIZE } from '../../utils/gameUtils'; // COLORSを削除
 
 interface Block3DProps {
     x: number;
@@ -40,8 +40,6 @@ export const Block3D = ({ x, y, color, isGhost = false, bumpEvent }: Block3DProp
 
     return (
         <motion.mesh
-            // 初期スケールを0ではなく0.1にして、レンダリングされているか確認しやすくする
-            // もしくは animate が効いていない場合のために initial を targetX/Z に合わせる
             initial={{ scale: 0, x: targetX, y: size / 2, z: targetZ }}
             animate={{
                 scale: isGhost ? 0.95 : 1,
@@ -54,7 +52,7 @@ export const Block3D = ({ x, y, color, isGhost = false, bumpEvent }: Block3DProp
             castShadow
             receiveShadow
             transition={{
-                duration: 0.3, // スプリングではなく単純な時間指定で試す（デバッグ用）
+                duration: 0.3,
                 type: "spring",
                 ...springConfig,
                 delay: spawnDelay
