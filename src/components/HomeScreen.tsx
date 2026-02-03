@@ -27,7 +27,10 @@ export const HomeScreen = ({ onStart, bestScore, isPlaying, toggleBGM }: HomeScr
                     {isPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
                 </button>
                 <button
-                    onClick={toggleTheme}
+                    onClick={() => {
+                        console.log('Theme toggle clicked, current theme:', theme);
+                        toggleTheme();
+                    }}
                     className="p-3 bg-[var(--gray-3)] rounded-full hover:bg-[var(--gray-4)] transition-colors text-[var(--gray-12)]"
                     aria-label="Toggle Theme"
                 >
