@@ -5,11 +5,11 @@ import { useTheme } from '../context/ThemeContext';
 interface HomeScreenProps {
     onStart: () => void;
     bestScore: number;
-    isPlaying: boolean;
-    toggleBGM: () => void;
+    isSoundOn: boolean;    // isPlaying から変更
+    toggleSound: () => void; // toggleBGM から変更
 }
 
-export const HomeScreen = ({ onStart, bestScore, isPlaying, toggleBGM }: HomeScreenProps) => {
+export const HomeScreen = ({ onStart, bestScore, isSoundOn, toggleSound }: HomeScreenProps) => {
     const { theme, toggleTheme } = useTheme();
 
     return (
@@ -18,18 +18,17 @@ export const HomeScreen = ({ onStart, bestScore, isPlaying, toggleBGM }: HomeScr
             {/* Control Buttons */}
             <div className="absolute top-4 right-4 flex gap-4">
                 <button
-                    onClick={toggleBGM}
+                    onClick={toggleSound}
                     className="p-3 bg-[var(--gray-3)] rounded-full hover:bg-[var(--gray-4)] transition-colors text-[var(--gray-12)]"
-                    aria-label="Toggle BGM"
+                    aria-label="Toggle Sound"
                 >
-                    {isPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
+                    {isSoundOn ? <Volume2 size={24} /> : <VolumeX size={24} />}
                 </button>
                 <button
                     onClick={toggleTheme}
                     className="p-3 bg-[var(--gray-3)] rounded-full hover:bg-[var(--gray-4)] transition-colors text-[var(--gray-12)]"
                     aria-label="Toggle Theme"
                 >
-                    {/* ライトモードなら月（ダークへの切替）、ダークなら太陽（ライトへの切替）を表示 */}
                     {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
                 </button>
             </div>

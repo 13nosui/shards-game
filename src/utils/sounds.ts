@@ -1,4 +1,5 @@
 const sounds: Record<string, HTMLAudioElement> = {};
+let isSoundEnabled = true; // デフォルトはON
 
 // Preload sounds
 if (typeof window !== 'undefined') {
@@ -6,7 +7,14 @@ if (typeof window !== 'undefined') {
     sounds.match.volume = 0.5;
 }
 
+export const setSoundEnabled = (enabled: boolean) => {
+    isSoundEnabled = enabled;
+};
+
 export const playSound = (type: 'slide' | 'break' | 'match') => {
+    // 音がOFFなら何もしない
+    if (!isSoundEnabled) return;
+
     if (type === 'match' && sounds.match) {
         // Clone node to allow overlapping sounds for combo/rapid matches
         const clone = sounds.match.cloneNode() as HTMLAudioElement;

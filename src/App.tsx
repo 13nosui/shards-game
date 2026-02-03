@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { GameContainer } from './components/GameContainer';
 import { HomeScreen } from './components/HomeScreen';
-// ThemeProvider のインポートは削除（useThemeなどは必要なら残す）
 import { initializeAdMob, showBanner } from './utils/admob';
 import { useBGM } from './hooks/useBGM';
+import { setSoundEnabled } from './utils/sounds'; // 追加
 import './index.css';
 
 function App() {
@@ -11,8 +11,29 @@ function App() {
   const [screen, setScreen] = useState<'home' | 'game'>('home');
   const [highScore, setHighScore] = useState(0);
 
-  // BGM管理をAppで行う
-  const { isPlaying, toggleBGM, play, stop } = useBGM('/sounds/bgm.mp3');
+  // サウンド設定（初期値はローカルストレージから取得、なければON）
+  const [isSoundOn, setIsSoundOn] = useState(() => {
+    const saved = localStorage.getItem('sound-enabled');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  // BGMフック
+  const { play, stop } = useBGM('/sounds/bgm.mp3');
+
+  // isSoundOn が変わったら BGM と SE の状態を更新
+  useEffect(() => {
+    // 1. SEの設定を更新
+    setSoundEnabled(isSoundOn);
+    // 2. 設定を保存
+    localStorage.setItem('sound-enabled', String(isSoundOn));
+
+    // 3. BGMの制御
+    if (!isSoundOn) {
+      stop(); // OFFなら止める
+    } else if (screen === 'game') {
+      play(); // ONで、かつゲーム中なら再生する
+    }
+  }, [isSoundOn, screen, play, stop]);
 
   useEffect(() => {
     const loadHighScore = () => {
@@ -42,7 +63,8 @@ function App() {
     initAds();
   }, []);
 
-  // ThemeProvider で囲むのをやめ、div を直接返します
+  const toggleSound = () => setIsSoundOn(prev => !prev);
+
   return (
     <div style={{
       width: '100%',
@@ -54,12 +76,12 @@ function App() {
       {screen === 'home' ? (
         <HomeScreen
           onStart={() => {
-            play();
+            if (isSoundOn) play(); // ゲーム開始時、設定がONなら再生
             setScreen('game');
           }}
           bestScore={highScore}
-          isPlaying={isPlaying}
-          toggleBGM={toggleBGM}
+          isSoundOn={isSoundOn}     // 変更
+          toggleSound={toggleSound} // 変更
         />
       ) : (
         <GameContainer onBack={() => {
