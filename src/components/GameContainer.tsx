@@ -10,7 +10,6 @@ interface GameContainerProps {
 }
 
 export const GameContainer = ({ onBack }: GameContainerProps) => {
-    // ロジックフックを使用
     const {
         smallBlocks,
         slide,
@@ -21,12 +20,11 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
         nextSpawnColors,
         nextSpawnPos,
         bumpEvent,
-        score // Keep score for the Game Over overlay
+        score
     } = useGameLogic();
 
     const [touchStart, setTouchStart] = useState<{ x: number, y: number } | null>(null);
 
-    // キーボード操作のリスナー
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (gameOver || isProcessing) return;
@@ -41,7 +39,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [slide, gameOver, isProcessing]);
 
-    // ベストスコア更新時の紙吹雪エフェクト
     useEffect(() => {
         if (gameOver && isNewRecord) {
             const duration = 3000;
@@ -71,7 +68,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
         }
     }, [gameOver, isNewRecord]);
 
-    // タッチ操作ハンドラ
     const handleTouchStart = (e: React.TouchEvent) => {
         const touch = e.touches[0];
         setTouchStart({ x: touch.clientX, y: touch.clientY });
@@ -86,7 +82,7 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
         const absX = Math.abs(deltaX);
         const absY = Math.abs(deltaY);
 
-        if (Math.max(absX, absY) > 30) { // スワイプ判定の閾値
+        if (Math.max(absX, absY) > 30) {
             if (absX > absY) {
                 slide(deltaX > 0 ? 'RIGHT' : 'LEFT');
             } else {
@@ -98,7 +94,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
 
     return (
         <div
-            // 変更点: overflow-hidden と overscroll-none を追加してスクロールを禁止
             className="flex flex-col items-center justify-center p-0 gap-8 select-none w-[95vw] max-w-[600px] mx-auto relative text-center touch-none h-[100dvh] overflow-hidden overscroll-none"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -107,7 +102,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
             <div className="absolute top-[calc(16px+env(safe-area-inset-top))] left-4 right-4 z-10 pointer-events-none">
                 <div className="relative flex items-start justify-center w-full">
 
-                    {/* HOMEボタン */}
                     <button
                         onClick={onBack}
                         className="absolute left-0 pointer-events-auto p-3 bg-[var(--gray-3)] rounded-full hover:bg-[var(--gray-4)] transition-colors text-[var(--gray-12)]"
@@ -115,7 +109,6 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
                         <Home size={24} />
                     </button>
 
-                    {/* NEXT表示 */}
                     <div className="flex flex-col items-center pointer-events-auto">
                         <div className="text-sm font-bold font-mono uppercase tracking-[0.2em] text-[var(--gray-12)] opacity-70 mb-2">
                             NEXT
@@ -135,6 +128,7 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
             </div>
 
             {/* 3D Scene Area */}
+            {/* 修正: 120%拡大などの余計なスタイルを削除し、標準サイズに戻す */}
             <div className="w-full aspect-square max-w-[500px] relative z-0">
                 <GameScene
                     smallBlocks={smallBlocks}
