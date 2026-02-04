@@ -102,26 +102,35 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            {/* Header Area: セーフエリア対応を追加 */}
-            <div className="absolute top-[calc(16px+env(safe-area-inset-top))] left-4 right-4 flex justify-between items-start z-10">
-                <button
-                    onClick={onBack}
-                    className="p-2 bg-white/10 backdrop-blur-md rounded-full text-text-primary opacity-70 hover:opacity-100 transition-opacity"
-                >
-                    <Home size={24} />
-                </button>
+            {/* Header Area: レイアウトを変更 */}
+            <div className="absolute top-[calc(16px+env(safe-area-inset-top))] left-4 right-4 z-10 pointer-events-none">
+                {/* コンテナを相対配置にして、内部で絶対配置と中央揃えを組み合わせる */}
+                <div className="relative flex items-start justify-center w-full">
 
-                <div className="flex flex-col items-end">
-                    <div className="text-[10px] font-mono uppercase tracking-widest opacity-50 mb-1">NEXT</div>
-                    <div className="grid grid-cols-2 gap-0.5 p-1 bg-white/5 rounded-sm border border-white/10">
-                        {nextSpawnColors.map((color, i) => (
-                            <div
-                                key={i}
-                                className="w-3 h-3 rounded-[1px]"
-                                style={{ backgroundColor: color }}
-                            />
-                        ))}
+                    {/* HOMEボタン: 左端に絶対配置 (pointer-events-autoでクリック可能に) */}
+                    <button
+                        onClick={onBack}
+                        className="absolute left-0 pointer-events-auto p-3 bg-[var(--gray-3)] rounded-full hover:bg-[var(--gray-4)] transition-colors text-[var(--gray-12)]"
+                    >
+                        <Home size={24} />
+                    </button>
+
+                    {/* NEXT表示: 中央配置 */}
+                    <div className="flex flex-col items-center pointer-events-auto">
+                        <div className="text-sm font-bold font-mono uppercase tracking-[0.2em] text-[var(--gray-12)] opacity-70 mb-2">
+                            NEXT
+                        </div>
+                        <div className="grid grid-cols-2 gap-1 p-1.5 bg-[var(--gray-3)] rounded-md border border-[var(--gray-12)]/10 shadow-sm">
+                            {nextSpawnColors.map((color, i) => (
+                                <div
+                                    key={i}
+                                    className="w-6 h-6 rounded-[2px] shadow-sm"
+                                    style={{ backgroundColor: color }}
+                                />
+                            ))}
+                        </div>
                     </div>
+
                 </div>
             </div>
 
