@@ -139,6 +139,19 @@ export const GameContainer = ({ onBack }: GameContainerProps) => {
                 />
             </div>
 
+            {/* ▼▼▼ 追加: Score Display (盤面下・中央) ▼▼▼ */}
+            <div className="relative z-10 pointer-events-none -mt-4">
+                <div className="flex flex-col items-center">
+                    <div className="text-xs font-bold font-mono uppercase tracking-[0.2em] text-[var(--gray-12)] opacity-60 mb-1">
+                        SCORE
+                    </div>
+                    <div className="font-bungee text-3xl text-[var(--gray-12)] bg-[var(--gray-3)]/80 px-6 py-2 rounded-lg border border-[var(--gray-12)]/10 shadow-sm backdrop-blur-sm transition-all">
+                        {score.toString().padStart(6, '0')}
+                    </div>
+                </div>
+            </div>
+            {/* ▲▲▲ 追加ここまで ▲▲▲ */}
+
             {/* Game Over Overlay */}
             <AnimatePresence>
                 {gameOver && (
