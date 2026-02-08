@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build web assets
+        run: npm run build
+
       # 3. Capacitorの同期 (ダウンロードしたプラグインをiOSプロジェクトに紐付けます)
       - name: Sync Capacitor
         run: npx cap sync ios
