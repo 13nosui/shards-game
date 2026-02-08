@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { GameContainer } from './components/GameContainer';
 import { HomeScreen } from './components/HomeScreen';
+import { Support } from './components/Support'; // ← 【追加 1】
 import { initializeAdMob, showBanner } from './utils/admob';
 import { useBGM } from './hooks/useBGM';
-import { setSoundEnabled } from './utils/sounds'; // 追加
+import { setSoundEnabled } from './utils/sounds';
 import './index.css';
 
 function App() {
   const [isNative, setIsNative] = useState(false);
   const [screen, setScreen] = useState<'home' | 'game'>('home');
   const [highScore, setHighScore] = useState(0);
+
+  // ↓ 【追加 2】 現在のURLパスを管理するState
+  const [path, setPath] = useState(window.location.pathname);
 
   // サウンド設定（初期値はローカルストレージから取得、なければON）
   const [isSoundOn, setIsSoundOn] = useState(() => {
@@ -19,6 +23,13 @@ function App() {
 
   // BGMフック
   const { play, stop } = useBGM('/sounds/bgm.mp3');
+
+  // ↓ 【追加 3】 URLの変更（戻る/進むボタン）を検知する
+  useEffect(() => {
+    const handlePopState = () => setPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // isSoundOn が変わったら BGM と SE の状態を更新
   useEffect(() => {
@@ -65,6 +76,12 @@ function App() {
 
   const toggleSound = () => setIsSoundOn(prev => !prev);
 
+  // ↓ 【追加 4】 パスが '/support' の場合はここですぐにリターン（ゲーム画面等は描画しない）
+  if (path === '/support') {
+    return <Support />;
+  }
+
+  // 既存のゲーム画面描画
   return (
     <div style={{
       width: '100%',
@@ -80,8 +97,8 @@ function App() {
             setScreen('game');
           }}
           bestScore={highScore}
-          isSoundOn={isSoundOn}     // 変更
-          toggleSound={toggleSound} // 変更
+          isSoundOn={isSoundOn}
+          toggleSound={toggleSound}
         />
       ) : (
         <GameContainer onBack={() => {
