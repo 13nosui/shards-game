@@ -1,0 +1,44 @@
+name: Build iOS App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-14 # 最新のXcode環境を使用
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # 1. Node.jsの準備
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 2. 依存関係のインストール (これでAdMobなどのプラグインがダウンロードされます)
+      - name: Install dependencies
+        run: npm ci
+
+      # 3. Capacitorの同期 (ダウンロードしたプラグインをiOSプロジェクトに紐付けます)
+      - name: Sync Capacitor
+        run: npx cap sync ios
+
+      # 4. iOSビルドの実行 (署名なしでビルドできるかチェック)
+      - name: Build iOS project
+        run: |
+          cd ios/App
+          xcodebuild -scheme App \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            clean build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
